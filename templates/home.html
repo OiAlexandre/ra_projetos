@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block page_title %}
+    Dashboard
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card card-primary card-outline">
+            <div class="card-body">
+                <h5 class="card-title">Bem-vindo ao Sistema de Produtos e Vendas</h5>
+
+                <p class="card-text">
+                    Este é o projeto de Frameworks e Persistência de Dados.
+                    Use o menu lateral para navegar entre os módulos de Produtos e Vendas.
+                </p>
+                
+                <p><strong>Requisitos Pendentes:</strong></p>
+                <ul>
+                    <li>CRUD de Produtos (Etapa 4)</li>
+                    <li>CRUD de Vendas</li>
+                    <li>Consulta com Filtro (produtos por categoria)</li>
+                    <li>Consulta com Join (itens da venda)</li>
+                    <li>Exportar dados para JSON e XML</li>
+                    <li>Importar dados de JSON ou XML</li>
+                    <li>Gerar relatório simples em TXT</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

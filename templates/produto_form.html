@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block page_title %}
+    {% if object %}
+        Editar Produto
+    {% else %}
+        Novo Produto
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">
+                    {% if object %}
+                        Editando: {{ object.nome }}
+                    {% else %}
+                        Preencha os dados do novo produto
+                    {% endif %}
+                </h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+            <form method="post">
+                {% csrf_token %}
+                <div class="card-body">
+                    
+                    <!-- Renderiza erros do formulário (ex: campo obrigatório vazio) -->
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        <strong>Erro!</strong> Por favor, corrija os campos abaixo:
+                        {{ form.non_field_errors }}
+                    </div>
+                    {% endif %}
+
+                    <!-- Usamos o form.py para estilizar, mas precisamos renderizar campo a campo -->
+                    
+                    <div class="form-group">
+                        <label for="{{ form.nome.id_for_label }}">{{ form.nome.label }}</label>
+                        {{ form.nome }}
+                        {% if form.nome.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.nome.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.descricao.id_for_label }}">{{ form.descricao.label }}</label>
+                        {{ form.descricao }}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.categoria.id_for_label }}">{{ form.categoria.label }}</label>
+                        {{ form.categoria }}
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ form.preco.id_for_label }}">{{ form.preco.label }}</label>
+                                {{ form.preco }}
+                                {% if form.preco.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.preco.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ form.estoque.id_for_label }}">{{ form.estoque.label }}</label>
+                                {{ form.estoque }}
+                                {% if form.estoque.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.estoque.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /.card-body -->
+
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Salvar
+                    </button>
+                    <a href="{% url 'produto_list' %}" class="btn btn-secondary">
+                        Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

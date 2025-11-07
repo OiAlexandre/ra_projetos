@@ -1,37 +1,88 @@
-from django.contrib import admin
-from .models import Categoria, Produto, Venda, ItemVenda
+from django.shortcuts import render
+from django.urls import reverse_lazy
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.contrib.messages.views import SuccessMessageMixin
 
-# Para permitir adicionar Itens de Venda dentro da Venda
-class ItemVendaInline(admin.TabularInline):
-    model = ItemVenda
-    extra = 1 # Quantos campos extras de item de venda aparecem por padrão
-    # Podemos tornar campos readonly após a criação, se necessário
-    # readonly_fields = ('preco_unitario',) 
+from .models import Produto, Categoria, Venda # Importamos Categoria e Venda
+from .forms import ProdutoForm
 
-@admin.register(Categoria)
-class CategoriaAdmin(admin.ModelAdmin):
-    list_display = ('nome',)
-    search_fields = ('nome',)
+# View para a página inicial (Dashboard)
+def home(request):
+    context = {} 
+    return render(request, 'home.html', context)
 
-@admin.register(Produto)
-class ProdutoAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'categoria', 'preco', 'estoque')
-    list_filter = ('categoria',)
-    search_fields = ('nome', 'descricao')
-    list_editable = ('preco', 'estoque') # Permite editar direto na lista
+# --- CRUD de Produtos ---
 
-@admin.register(Venda)
-class VendaAdmin(admin.ModelAdmin):
-    list_display = ('id', 'cliente', 'data', 'total', 'comprovante')
-    list_filter = ('data',)
-    search_fields = ('cliente', 'id')
-    inlines = [ItemVendaInline] # Adiciona os itens de venda na página da venda
+# READ (Listar)
+class ProdutoListView(ListView):
+    model = Produto
+    template_name = 'produto_list.html'
+    context_object_name = 'produtos'
+    paginate_by = 10
 
-    # Futuramente, podemos adicionar um campo readonly para o total calculado
-    # readonly_fields = ('total',) 
+    # (NOVO) Sobrescrevemos o get_queryset para aplicar o filtro
+    def get_queryset(self):
+        # Pega o queryset base (todos os produtos)
+        queryset = super().get_queryset().order_by('nome')
+        
+        # Pega o 'categoria_id' do parâmetro GET da URL (ex: ?categoria=2)
+        categoria_id = self.request.GET.get('categoria')
+        
+        # Se um categoria_id foi fornecido e não está vazio
+        if categoria_id:
+            # Filtra o queryset
+            queryset = queryset.filter(categoria_id=categoria_id)
+            
+        return queryset
 
-@admin.register(ItemVenda)
-class ItemVendaAdmin(admin.ModelAdmin):
-    list_display = ('venda', 'produto', 'quantidade', 'preco_unitario')
-    list_filter = ('produto', 'venda__data')
-    search_fields = ('produto__nome', 'venda__cliente')
+    # (NOVO) Adiciona o contexto para o template
+    def get_context_data(self, **kwargs):
+        # Pega o contexto existente
+        context = super().get_context_data(**kwargs)
+        # Adiciona a lista de todas as categorias ao contexto
+        # para popularmos o dropdown de filtro no template
+        context['categorias'] = Categoria.objects.all().order_by('nome')
+        return context
+
+
+# CREATE (Criar)
+class ProdutoCreateView(SuccessMessageMixin, CreateView):
+    model = Produto
+    form_class = ProdutoForm
+    template_name = 'produto_form.html'
+    success_url = reverse_lazy('produto_list') 
+    success_message = "Produto criado com sucesso!" 
+
+# UPDATE (Atualizar/Editar)
+class ProdutoUpdateView(SuccessMessageMixin, UpdateView):
+    model = Produto
+    form_class = ProdutoForm
+    template_name = 'produto_form.html'
+    success_url = reverse_lazy('produto_list')
+    success_message = "Produto atualizado com sucesso!"
+
+# DELETE (Deletar)
+class ProdutoDeleteView(SuccessMessageMixin, DeleteView):
+    model = Produto
+    template_name = 'produto_confirm_delete.html'
+    success_url = reverse_lazy('produto_list')
+    # (Para a mensagem de sucesso na deleção, precisaríamos de um ajuste)
+    # success_message = "Produto deletado com sucesso!" 
+
+
+# --- CRUD de Vendas ---
+
+# (NOVO) READ (Listar Vendas) - Requisito: "Consulta com Join"
+class VendaListView(ListView):
+    model = Venda
+    template_name = 'venda_list.html'
+    context_object_name = 'vendas'
+    paginate_by = 10
+
+    def get_queryset(self):
+        # Este é o "JOIN" (otimizado pelo Django com prefetch_related)
+        # 1. Buscamos todas as Vendas
+        # 2. Damos 'prefetch' (buscar junto) nos 'itens' de cada venda
+        # 3. E também damos 'prefetch' no 'produto' de cada 'item'
+        # 4. Ordenamos pelas mais recentes
+        return Venda.objects.prefetch_related('itens__produto').order_by('-data')

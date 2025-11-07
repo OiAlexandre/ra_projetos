@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+
+{% block page_title %}
+    {% if is_update_view %}
+        Editar Venda #{{ form.instance.pk }}
+    {% else %}
+        Registrar Nova Venda
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title">Dados da Venda</h3>
+                </div>
+                <div class="card-body">
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        <strong>Erro!</strong> Por favor, corrija os campos abaixo:
+                        {{ form.non_field_errors }}
+                    </div>
+                    {% endif %}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ form.cliente.id_for_label }}">{{ form.cliente.label }}</label>
+                                {{ form.cliente }}
+                                {% if form.cliente.errors %}<div class="invalid-feedback d-block">{{ form.cliente.errors }}</div>{% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ form.status.id_for_label }}">{{ form.status.label }}</label>
+                                {{ form.status }}
+                                {% if form.status.errors %}<div class="invalid-feedback d-block">{{ form.status.errors }}</div>{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.comprovante.id_for_label }}">{{ form.comprovante.label }} (Opcional)</label>
+                        {{ form.comprovante }}
+                        {% if form.comprovante.errors %}<div class="invalid-feedback d-block">{{ form.comprovante.errors }}</div>{% endif %}
+                    </div>
+                </div>
+            </div>
+            {% if not is_update_view %}
+            <div class="card card-success">
+                <div class="card-header">
+                    <h3 class="card-title">Itens da Venda</h3>
+                </div>
+                <div class="card-body">
+                    {% if formset.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ formset.non_field_errors }}
+                    </div>
+                    {% endif %}
+                    
+                    {{ formset.management_form }}
+
+                    <div class="row font-weight-bold d-none d-md-flex mb-2">
+                        <div class="col-md-6"><label>Produto</label></div>
+                        <div class="col-md-4"><label>Quantidade</label></div>
+                        <div class="col-md-2"><label>Ação</label></div>
+                    </div>
+
+                    <div id="formset-container">
+                        
+                        {% for form_item in formset %}
+                        <div class="row formset-row mb-3">
+                            <div class="col-md-6">
+                                {{ form_item.produto }}
+                                {% if form_item.produto.errors %}<div class="invalid-feedback d-block">{{ form_item.produto.errors }}</div>{% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                {{ form_item.quantidade }}
+                                {% if form_item.quantidade.errors %}<div class="invalid-feedback d-block">{{ form_item.quantidade.errors }}</div>{% endif %}
+                            </div>
+                            <div class="col-md-2">
+                                <button type="button" class="btn btn-danger btn-sm remove-form-row">Remover</button>
+                            </div>
+                            {{ form_item.id }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <button id="add-form-row" type="button" class="btn btn-success btn-sm mt-3">
+                        <i class="fas fa-plus"></i> Adicionar Item
+                    </button>
+                </div>
+            </div>
+            {% endif %}
+            <div class="card-footer">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Salvar Venda
+                </button>
+                <a href="{% url 'venda_list' %}" class="btn btn-secondary">
+                    Cancelar
+                </a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<div id="empty-form-template" style="display: none;">
+    <div class="row formset-row mb-3">
+        <div class="col-md-6">
+            {{ empty_form.produto }}
+            {% if empty_form.produto.errors %}<div class="invalid-feedback d-block">{{ empty_form.produto.errors }}</div>{% endif %}
+        </div>
+        <div class="col-md-4">
+            {{ empty_form.quantidade }}
+            {% if empty_form.quantidade.errors %}<div class="invalid-feedback d-block">{{ empty_form.quantidade.errors }}</div>{% endif %}
+        </div>
+        <div class="col-md-2">
+            <button type="button" class="btn btn-danger btn-sm remove-form-row">Remover</button>
+        </div>
+        {{ empty_form.id }}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Só executa o JS do formset se o container existir (ou seja, se não for 'update_view')
+    const container = document.getElementById('formset-container');
+    if (!container) return;
+
+    const addButton = document.getElementById('add-form-row');
+    const totalFormsInput = document.querySelector('#id_itens-TOTAL_FORMS');
+    const emptyFormTemplate = document.getElementById('empty-form-template').innerHTML;
+
+    addButton.addEventListener('click', function() {
+        let formCount = parseInt(totalFormsInput.value);
+        let newFormHtml = emptyFormTemplate.replace(/__prefix__/g, formCount);
+        
+        let newFormNode = document.createElement('div');
+        newFormNode.innerHTML = newFormHtml;
+        // Remove o 'div' extra que o innerHTML cria
+        let formRow = newFormNode.firstElementChild; 
+        container.appendChild(formRow);
+        
+        totalFormsInput.value = formCount + 1;
+    });
+
+    container.addEventListener('click', function(e) {
+        if (e.target && e.target.classList.contains('remove-form-row')) {
+            e.target.closest('.formset-row').remove();
+            // Não precisa decrementar o TOTAL_FORMS, o Django lida com isso.
+        }
+    });
+});
+</script>
+{% endblock %}

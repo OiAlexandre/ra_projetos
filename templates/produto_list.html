@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block page_title %}
+    Lista de Produtos
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Produtos Cadastrados</h3>
+                <div class="card-tools">
+                    
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-download"></i> Exportar como...
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="{% url 'produto_export' %}?format=json&categoria={{ request.GET.categoria|default:'' }}">
+                                <i class="fas fa-file-code"></i> JSON
+                            </a>
+                            <a class="dropdown-item" href="{% url 'produto_export' %}?format=xml&categoria={{ request.GET.categoria|default:'' }}">
+                                <i class="fas fa-file-code"></i> XML
+                            </a>
+                            <a class="dropdown-item" href="{% url 'produto_export' %}?format=txt&categoria={{ request.GET.categoria|default:'' }}">
+                                <i class="fas fa-file-alt"></i> Relatório TXT
+                            </a>
+                        </div>
+                    </div>
+                    <a href="{% url 'produto_create' %}" class="btn btn-primary btn-sm ml-2">
+                        <i class="fas fa-plus"></i> Novo Produto
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <form method="GET" action="{% url 'produto_list' %}" class="form-inline mb-3">
+                    <div class="form-group mr-2">
+                        <label for="categoria" class="mr-2">Filtrar por Categoria:</label>
+                        <select name="categoria" id="categoria" class="form-control form-control-sm">
+                            <option value="">Todas as Categorias</option>
+                            {% for c in categorias %}
+                            <option value="{{ c.pk }}" {% if request.GET.categoria == c.pk|stringformat:"s" %}selected{% endif %}>
+                                {{ c.nome }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-secondary btn-sm">
+                        <i class="fas fa-filter"></i> Filtrar
+                    </button>
+                    <a href="{% url 'produto_list' %}" class="btn btn-default btn-sm ml-2">Limpar</a>
+                </form>
+            </div>
+            <div class="card-body table-responsive p-0" style="border-top: 1px solid #dee2e6;">
+                <table class="table table-hover text-nowrap">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Categoria</th>
+                            <th>Preço</th>
+                            <th>Estoque</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for produto in produtos %}
+                        <tr>
+                            <td>{{ produto.id }}</td>
+                            <td>{{ produto.nome }}</td>
+                            <td>{{ produto.categoria.nome|default:"-" }}</td>
+                            <td>R$ {{ produto.preco }}</td>
+                            <td>{{ produto.estoque }}</td>
+                            <td>
+                                <a href="{% url 'produto_update' produto.pk %}" class="btn btn-info btn-xs" title="Editar">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </a>
+                                <a href="{% url 'produto_delete' produto.pk %}" class="btn btn-danger btn-xs" title="Deletar">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center">Nenhum produto encontrado.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            </div>
+        </div>
+</div>
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block page_title %}
+    Lista de Vendas
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Vendas Realizadas</h3>
+                <div class="card-tools">
+                    <a href="{% url 'venda_create' %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> Nova Venda
+                    </a>
+                </div>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body table-responsive p-0">
+                <table class="table table-hover"> 
+                    <thead>
+                        <tr>
+                            <th>ID Venda</th>
+                            <th>Cliente</th>
+                            <th>Data</th>
+                            <th>Status</th>
+                            <th>Total</th>
+                            <th>Itens (Join)</th>
+                            <th>Comprovante</th>
+                            <th>Ações</th> <!-- (NOVO) Coluna Ações -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for venda in vendas %}
+                        <tr>
+                            <td>{{ venda.id }}</td>
+                            <td>{{ venda.cliente }}</td>
+                            <td>{{ venda.data|date:"d/m/Y H:i" }}</td>
+                            <td>
+                                {% if venda.status == 'PAGA' %}
+                                    <span class="badge badge-success">{{ venda.get_status_display }}</span>
+                                {% elif venda.status == 'PENDENTE' %}
+                                    <span class="badge badge-warning">{{ venda.get_status_display }}</span>
+                                {% elif venda.status == 'CANCELADA' %}
+                                    <span class="badge badge-danger">{{ venda.get_status_display }}</span>
+                                {% endif %}
+                            </td>
+                            <td>R$ {{ venda.total }}</td>
+                            <td>
+                                {% if venda.itens.all %}
+                                <ul>
+                                    {% for item in venda.itens.all %}
+                                    <li>{{ item.quantidade }}x {{ item.produto.nome }}</li>
+                                    {% endfor %}
+                                </ul>
+                                {% else %}
+                                    <span class="text-muted">(Sem itens)</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if venda.comprovante %}
+                                <a href="{{ venda.comprovante.url }}" target="_blank" class="btn btn-info btn-xs">
+                                    <i class="fas fa-file-alt"></i> Ver
+                                </a>
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            <!-- (NOVO) Botão Editar -->
+                            <td>
+                                <a href="{% url 'venda_update' venda.pk %}" class="btn btn-info btn-xs" title="Editar Status">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" class="text-center">Nenhuma venda registrada ainda.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+    </div>
+</div>
+{% endblock %}

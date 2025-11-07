@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block page_title %}
+    Confirmar Deleção
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card card-danger">
+            <div class="card-header">
+                <h3 class="card-title">Atenção!</h3>
+            </div>
+            <form method="post">
+                {% csrf_token %}
+                <div class="card-body">
+                    <h4>Tem certeza que deseja deletar o produto: <strong>"{{ object.nome }}"</strong>?</h4>
+                    <p class="text-danger">
+                        Esta ação não pode ser desfeita.
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Sim, deletar
+                    </button>
+                    <a href="{% url 'produto_list' %}" class="btn btn-secondary">
+                        Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
