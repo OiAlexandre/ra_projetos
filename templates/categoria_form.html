@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block page_title %}
+    {% if object %}
+        Editar Categoria
+    {% else %}
+        Nova Categoria
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card {% if object %}card-info{% else %}card-primary{% endif %}">
+            <div class="card-header">
+                <h3 class="card-title">Dados da Categoria</h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+            <form method="post">
+                {% csrf_token %}
+                <div class="card-body">
+                    
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        {{ form.non_field_errors }}
+                        {{ form.nome.errors }}
+                    </div>
+                    {% endif %}
+                    
+                    <div class="form-group">
+                        <label for="{{ form.nome.id_for_label }}">{{ form.nome.label }}</label>
+                        {{ form.nome }}
+                    </div>
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Salvar
+                    </button>
+                    <a href="{% url 'categoria_list' %}" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+        <!-- /.card -->
+    </div>
+</div>
+{% endblock %}

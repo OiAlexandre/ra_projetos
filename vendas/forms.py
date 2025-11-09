@@ -26,10 +26,8 @@ class ProdutoForm(forms.ModelForm):
             'estoque': 'Quantidade em Estoque',
         }
 
-# --- Formulários de Venda ---
-
+# --- Formulários de Venda (sem alteração) ---
 class VendaForm(forms.ModelForm):
-    """Formulário para a Venda principal (Cliente, Status, Comprovante)."""
     class Meta:
         model = Venda
         fields = ['cliente', 'status', 'comprovante']
@@ -39,44 +37,28 @@ class VendaForm(forms.ModelForm):
             'comprovante': forms.FileInput(attrs={'class': 'form-control-file'}),
         }
 
-
 class ItemVendaForm(forms.ModelForm):
-    """Formulário para um ItemVenda (Produto, Quantidade)."""
-    
     produto = forms.ModelChoiceField(
         queryset=Produto.objects.filter(estoque__gt=0).order_by('nome'),
         widget=forms.Select(attrs={'class': 'form-control select2'}), 
         required=True
     )
-    
     class Meta:
         model = ItemVenda
         fields = ['produto', 'quantidade']
         widgets = {
             'quantidade': forms.NumberInput(attrs={'class': 'form-control', 'min': '1', 'value': '1'}),
         }
-
-    # **** (NOVO) ESTA É A CORREÇÃO DA VALIDAÇÃO ****
     def clean(self):
-        """
-        Validação de Nível de Formulário para checar o estoque.
-        """
         cleaned_data = super().clean()
         produto = cleaned_data.get('produto')
         quantidade = cleaned_data.get('quantidade')
-
-        # Verifica se ambos os campos estão presentes
         if produto and quantidade:
-            # Verifica se a quantidade pedida é maior que o estoque
             if quantidade > produto.estoque:
-                # Cria a mensagem de erro específica
                 error_msg = f"Estoque insuficiente! Disponível: {produto.estoque}"
-                # Adiciona o erro ao campo 'quantidade'
                 self.add_error('quantidade', forms.ValidationError(error_msg))
-        
         return cleaned_data
 
-# FormSet Factory (sem alteração da Etapa 8)
 ItemVendaFormSet = inlineformset_factory(
     Venda,
     ItemVenda,
@@ -86,3 +68,13 @@ ItemVendaFormSet = inlineformset_factory(
     min_num=1,
     validate_min=True,
 )
+
+# --- (NOVO) Formulário de Categoria ---
+class CategoriaForm(forms.ModelForm):
+    """Formulário para Criar/Editar uma Categoria."""
+    class Meta:
+        model = Categoria
+        fields = ['nome']
+        widgets = {
+            'nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome da categoria'}),
+        }

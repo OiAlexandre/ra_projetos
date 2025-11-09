@@ -5,6 +5,35 @@
 {% endblock %}
 
 {% block content %}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card card-info">
+            <div class="card-header">
+                <h3 class="card-title">Importar Produtos (JSON ou XML)</h3>
+            </div>
+            <form method="post" action="{% url 'produto_import' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="arquivo_importacao">Selecione o arquivo</label>
+                        <div class="input-group">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="arquivo_importacao" name="arquivo_importacao" required>
+                                <label class="custom-file-label" for="arquivo_importacao">Escolher arquivo...</label>
+                            </div>
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="fas fa-upload"></i> Importar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -92,4 +121,51 @@
             </div>
         </div>
 </div>
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Para o input de arquivo de importação
+    const fileInput = document.getElementById('arquivo_importacao');
+    if (fileInput) {
+        fileInput.addEventListener('change', function() {
+            // Pega o nome do arquivo
+            const fileName = this.files[0] ? this.files[0].name : 'Escolher arquivo...';
+            // Atualiza o label
+            const nextSibling = this.nextElementSibling;
+            if (nextSibling) {
+                nextSibling.innerText = fileName;
+            }
+        });
+    }
+
+    // Script do formset (da etapa anterior)
+    const container = document.getElementById('formset-container');
+    if (!container) return;
+
+    const addButton = document.getElementById('add-form-row');
+    const totalFormsInput = document.querySelector('#id_itens-TOTAL_FORMS');
+    const emptyFormTemplate = document.getElementById('empty-form-template').innerHTML;
+
+    addButton.addEventListener('click', function() {
+        let formCount = parseInt(totalFormsInput.value);
+        let newFormHtml = emptyFormTemplate.replace(/__prefix__/g, formCount);
+        
+        let newFormNode = document.createElement('div');
+        newFormNode.innerHTML = newFormHtml;
+        let formRow = newFormNode.firstElementChild; 
+        container.appendChild(formRow);
+        
+        totalFormsInput.value = formCount + 1;
+    });
+
+    container.addEventListener('click', function(e) {
+        if (e.target && e.target.classList.contains('remove-form-row')) {
+            e.target.closest('.formset-row').remove();
+        }
+    });
+});
+</script>
 {% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block page_title %}
+    Confirmar Deleção
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card card-danger">
+            <div class="card-header">
+                <h3 class="card-title">Deletar Categoria</h3>
+            </div>
+            <form method="post">
+                {% csrf_token %}
+                <div class="card-body">
+                    <p>Você tem certeza que deseja deletar a categoria <strong>"{{ object.nome }}"</strong>?</p>
+                    
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i> <strong>Atenção:</strong>
+                        Todos os produtos que pertencem a esta categoria terão seu campo 'categoria'
+                        definido como 'Sem Categoria' (Nulo). Esta ação é irreversível.
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-danger">Sim, deletar</button>
+                    <a href="{% url 'categoria_list' %}" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block page_title %}
+    Lista de Categorias
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Categorias Cadastradas</h3>
+                <div class="card-tools">
+                    <a href="{% url 'categoria_create' %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> Nova Categoria
+                    </a>
+                </div>
+            </div>
+            <!-- /.card-header -->
+
+            <div class="card-body table-responsive p-0">
+                <table class="table table-hover text-nowrap">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for categoria in categorias %}
+                        <tr>
+                            <td>{{ categoria.id }}</td>
+                            <td>{{ categoria.nome }}</td>
+                            <td>
+                                <a href="{% url 'categoria_update' categoria.pk %}" class="btn btn-info btn-xs" title="Editar">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </a>
+                                <a href="{% url 'categoria_delete' categoria.pk %}" class="btn btn-danger btn-xs" title="Deletar">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center">Nenhuma categoria encontrada.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+    </div>
+</div>
+{% endblock %}
