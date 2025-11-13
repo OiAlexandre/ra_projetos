@@ -11,6 +11,169 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
+  
+  <style>
+    /* Paleta de cores azul personalizada */
+    :root {
+      --primary-blue: #1e3a8a;
+      --secondary-blue: #2563eb;
+      --light-blue: #3b82f6;
+      --accent-blue: #60a5fa;
+      --dark-blue: #1e40af;
+    }
+
+    /* Sidebar em azul escuro */
+    .main-sidebar {
+      background: linear-gradient(180deg, var(--primary-blue) 0%, #1e293b 100%) !important;
+    }
+
+    /* Brand link */
+    .brand-link {
+      background-color: rgba(0, 0, 0, 0.2) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+
+    .brand-link:hover {
+      background-color: rgba(0, 0, 0, 0.3) !important;
+    }
+
+    /* Navbar superior em azul */
+    .main-header.navbar {
+      background: linear-gradient(90deg, var(--secondary-blue) 0%, var(--light-blue) 100%) !important;
+      border-bottom: 3px solid var(--primary-blue) !important;
+    }
+
+    .main-header .nav-link {
+      color: white !important;
+    }
+
+    .main-header .nav-link:hover {
+      color: #e0e7ff !important;
+    }
+
+    /* Links da sidebar */
+    .nav-sidebar .nav-link {
+      color: #e2e8f0 !important;
+      transition: all 0.3s ease;
+    }
+
+    .nav-sidebar .nav-link:hover {
+      background-color: rgba(59, 130, 246, 0.2) !important;
+      color: white !important;
+      transform: translateX(5px);
+    }
+
+    .nav-sidebar .nav-link.active {
+      background: linear-gradient(90deg, var(--light-blue) 0%, var(--accent-blue) 100%) !important;
+      color: white !important;
+      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+    }
+
+    /* Ícones da sidebar */
+    .nav-sidebar .nav-icon {
+      color: var(--accent-blue) !important;
+      transition: all 0.3s ease;
+    }
+
+    .nav-sidebar .nav-link:hover .nav-icon,
+    .nav-sidebar .nav-link.active .nav-icon {
+      color: white !important;
+      transform: scale(1.1);
+    }
+
+    /* Headers da sidebar */
+    .nav-header {
+      color: var(--accent-blue) !important;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    /* Content header */
+    .content-header h1 {
+      color: var(--primary-blue);
+      font-weight: 600;
+    }
+
+    /* Footer */
+    .main-footer {
+      background-color: #f8fafc;
+      border-top: 3px solid var(--secondary-blue);
+      color: #64748b;
+    }
+
+    /* Alertas customizados */
+    .alert-success {
+      background-color: #dbeafe;
+      border-left: 4px solid var(--secondary-blue);
+      color: var(--primary-blue);
+    }
+
+    .alert-info {
+      background-color: #e0f2fe;
+      border-left: 4px solid var(--light-blue);
+      color: var(--dark-blue);
+    }
+
+    /* Botões personalizados */
+    .btn-primary {
+      background: linear-gradient(135deg, var(--secondary-blue) 0%, var(--light-blue) 100%);
+      border: none;
+      box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
+    }
+
+    /* Cards */
+    .card {
+      border-top: 3px solid var(--secondary-blue);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      box-shadow: 0 4px 16px rgba(37, 99, 235, 0.15);
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, var(--secondary-blue) 0%, var(--light-blue) 100%);
+      color: white;
+      font-weight: 600;
+    }
+
+    /* Ícone da marca */
+    .brand-image {
+      color: var(--accent-blue);
+      font-size: 1.8rem;
+    }
+
+    /* Efeito de hover no pushmenu */
+    [data-widget="pushmenu"]:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+    }
+
+    /* Scrollbar personalizada */
+    .sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sidebar::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: var(--accent-blue);
+      border-radius: 3px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb:hover {
+      background: var(--light-blue);
+    }
+  </style>
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
@@ -34,21 +197,11 @@
     <!-- Brand Logo -->
     <a href="{% url 'home' %}" class="brand-link">
       <i class="fa-solid fa-boxes-stacked brand-image img-circle elevation-3" style="opacity: .8"></i>
-      <span class="brand-text font-weight-light">Projeto Vendas</span>
+      <span class="brand-text font-weight-light">BlueStock</span>
     </a>
 
     <!-- Sidebar -->
     <div class="sidebar">
-      <!-- Sidebar user panel (optional) -->
-      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-        <div class="image">
-          <img src="https://placehold.co/160x160/007bff/white?text=User" class="img-circle elevation-2" alt="User Image">
-        </div>
-        <div class="info">
-          <a href="#" class="d-block">Usuário (Faculdade)</a>
-        </div>
-      </div>
-
       <!-- Sidebar Menu -->
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
@@ -81,7 +234,6 @@
             </a>
           </li>
           
-          <!-- **** (ATUALIZADO) Link de Categorias **** -->
           <li class="nav-item">
             <a href="{% url 'categoria_list' %}" class="nav-link {% if 'categoria' in request.resolver_match.url_name %}active{% endif %}">
               <i class="nav-icon fas fa-tags"></i>
@@ -149,15 +301,14 @@
   </div>
   <!-- /.content-wrapper -->
 
-
   <!-- Main Footer -->
   <footer class="main-footer">
     <!-- To the right -->
     <div class="float-right d-none d-sm-inline">
-      Projeto de Faculdade - Frameworks
+      
     </div>
     <!-- Default to the left -->
-    <strong>Copyright &copy; 2024.</strong> Todos os direitos reservados.
+    <strong>Copyright &copy; 2025.</strong> Todos os direitos reservados.
   </footer>
 </div>
 <!-- ./wrapper -->
